@@ -1,7 +1,9 @@
-package client
+package main
 
 import (
+	"context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"proto-go/greet/proto"
 )
@@ -9,14 +11,26 @@ import (
 var addr string = "localhost:50051"
 
 func main() {
-	conn, err := grpc.Dial(addr)
+
+	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
 	if err != nil {
-		log.Fatalf("Failes to connect %v\n", err)
+		log.Fatalf("Did not connect: %v", err)
 	}
 
 	defer conn.Close()
-
 	c := proto.NewGreetServiceClient(conn)
 
-	doGreet(c)
+	DoGreet(c)
+}
+
+func DoGreet(c proto.GreetServiceClient) {
+	log.Println("doGreet was invoked")
+	r, err := c.Greet(context.Background(), &proto.GreetRequest{FirstName: "Clement"})
+
+	if err != nil {
+		log.Fatalf("Could not greet: %v\n", err)
+	}
+
+	log.Printf("Greeting: %s\n", r.Result)
 }

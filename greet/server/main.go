@@ -1,4 +1,4 @@
-package server
+package main
 
 import (
 	"google.golang.org/grpc"
@@ -7,23 +7,27 @@ import (
 	"proto-go/greet/proto"
 )
 
-var addr string = "0.0.0.5051"
+var addr string = "localhost:50051"
 
 type Server struct {
 	proto.GreetServiceServer
 }
 
 func main() {
-	list, err := net.Listen("tcp", addr)
+	lis, err := net.Listen("tcp", addr)
+
 	if err != nil {
-		log.Fatalf("Failed to listion on: %v\n", err)
+		log.Fatalf("Failed to listen: %v\n", err)
 	}
 
-	log.Fatalf("Listining on %s \n", addr)
+	defer lis.Close()
+	log.Printf("Listening at %s\n", addr)
 
 	s := grpc.NewServer()
 	proto.RegisterGreetServiceServer(s, &Server{})
-	if err = s.Serve(list); err != nil {
-		log.Fatalf("Failed to server %v \n", err)
+
+	//defer s.Stop()
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("Failed to serve: %v\n", err)
 	}
 }
