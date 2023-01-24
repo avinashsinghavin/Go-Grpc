@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package calculator;
+
+option go_package = "proto-go/calculator/proto";
+
+message CalculationRequest {
+  string operation = 1;
+  int32 x = 2;
+  int32 y = 3;
+}
+
+message CalculatorResponse {
+  int64 result = 1;
+}
+
+service CalculatorService {
+  rpc Calculate(CalculationRequest) returns (CalculatorResponse);
+}
