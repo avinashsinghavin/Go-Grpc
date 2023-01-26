@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
@@ -21,16 +20,6 @@ func main() {
 	defer conn.Close()
 	c := proto.NewGreetServiceClient(conn)
 
-	DoGreet(c)
-}
-
-func DoGreet(c proto.GreetServiceClient) {
-	log.Println("doGreet was invoked")
-	r, err := c.Greet(context.Background(), &proto.GreetRequest{FirstName: "Clement"})
-
-	if err != nil {
-		log.Fatalf("Could not greet: %v\n", err)
-	}
-
-	log.Printf("Greeting: %s\n", r.Result)
+	//doGreet(c)
+	doGreetServerStreamingClient(c)
 }
