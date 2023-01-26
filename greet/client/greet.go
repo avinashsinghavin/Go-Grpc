@@ -9,7 +9,7 @@ import (
 func doGreet(c proto.GreetServiceClient) {
 	log.Printf("do greet was invoked")
 	res, err := c.Greet(context.Background(), &proto.GreetRequest{
-		FirstName: "Avinash",
+		FirstName: "Avinash unary",
 	})
 
 	if err != nil {

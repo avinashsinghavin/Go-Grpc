@@ -11,7 +11,7 @@ func doGreetServerStreamingClient(c proto.GreetServiceClient) {
 	log.Printf("Greet from client in Server streaming")
 
 	req := &proto.GreetRequest{
-		FirstName: "Avinash",
+		FirstName: "Avinash Server Streaming",
 	}
 
 	stream, err := c.GreetServerStreaming(context.Background(), req)
