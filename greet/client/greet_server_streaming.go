@@ -23,6 +23,7 @@ func doGreetServerStreamingClient(c proto.GreetServiceClient) {
 		msg, err := stream.Recv()
 		if err != nil {
 			log.Printf("Warning while reading the stream %v \n", err)
+			break
 		}
 		if err == io.EOF {
 			log.Printf("Break as error is EOF :%v", err)

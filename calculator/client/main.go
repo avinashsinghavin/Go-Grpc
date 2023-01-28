@@ -18,4 +18,5 @@ func main() {
 	defer conn.Close()
 	c := proto.NewCalculatorServiceClient(conn)
 	doCalculate(c)
+	findPrimary(c)
 }
