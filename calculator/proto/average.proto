@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package calculator;
+
+option go_package = "proto-go/calculator/proto";
+
+message AverageRequest{
+  int32 number = 1;
+}
+
+message AverageResponse {
+  int32 total = 1;
+}

@@ -20,6 +20,7 @@ func main() {
 	defer conn.Close()
 	c := proto.NewGreetServiceClient(conn)
 
-	doGreet(c)
-	doGreetServerStreamingClient(c)
+	//doGreet(c)
+	//doGreetServerStreamingClient(c)
+	greetClientStreaming(c)
 }

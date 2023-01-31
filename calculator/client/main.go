@@ -19,4 +19,5 @@ func main() {
 	c := proto.NewCalculatorServiceClient(conn)
 	doCalculate(c)
 	findPrimary(c)
+	doAverage(c)
 }

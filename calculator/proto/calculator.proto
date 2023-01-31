@@ -5,6 +5,7 @@ package calculator;
 option go_package = "proto-go/calculator/proto";
 
 import "prime.proto";
+import "average.proto";
 
 message CalculationRequest {
   string operation = 1;
@@ -19,4 +20,5 @@ message CalculatorResponse {
 service CalculatorService {
   rpc Calculate(CalculationRequest) returns (CalculatorResponse);
   rpc PrimeDecomposition(NumberRequest) returns (stream PrimeNoResponse);
+  rpc AverageClientStreaming(stream AverageRequest) returns (AverageResponse);
 }
