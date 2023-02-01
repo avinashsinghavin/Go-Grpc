@@ -22,5 +22,6 @@ func main() {
 
 	//doGreet(c)
 	//doGreetServerStreamingClient(c)
-	greetClientStreaming(c)
+	//greetClientStreaming(c)
+	greetBiDirectional(c)
 }

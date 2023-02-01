@@ -25,6 +25,7 @@ type GreetServiceClient interface {
 	Greet(ctx context.Context, in *GreetRequest, opts ...grpc.CallOption) (*GreetResponse, error)
 	GreetServerStreaming(ctx context.Context, in *GreetRequest, opts ...grpc.CallOption) (GreetService_GreetServerStreamingClient, error)
 	GreetClientStreaming(ctx context.Context, opts ...grpc.CallOption) (GreetService_GreetClientStreamingClient, error)
+	GreetEveryOneBiDirectional(ctx context.Context, opts ...grpc.CallOption) (GreetService_GreetEveryOneBiDirectionalClient, error)
 }
 
 type greetServiceClient struct {
@@ -110,6 +111,37 @@ func (x *greetServiceGreetClientStreamingClient) CloseAndRecv() (*GreetResponse,
 	return m, nil
 }
 
+func (c *greetServiceClient) GreetEveryOneBiDirectional(ctx context.Context, opts ...grpc.CallOption) (GreetService_GreetEveryOneBiDirectionalClient, error) {
+	stream, err := c.cc.NewStream(ctx, &GreetService_ServiceDesc.Streams[2], "/greet.GreetService/GreetEveryOneBiDirectional", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &greetServiceGreetEveryOneBiDirectionalClient{stream}
+	return x, nil
+}
+
+type GreetService_GreetEveryOneBiDirectionalClient interface {
+	Send(*GreetRequest) error
+	Recv() (*GreetResponse, error)
+	grpc.ClientStream
+}
+
+type greetServiceGreetEveryOneBiDirectionalClient struct {
+	grpc.ClientStream
+}
+
+func (x *greetServiceGreetEveryOneBiDirectionalClient) Send(m *GreetRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *greetServiceGreetEveryOneBiDirectionalClient) Recv() (*GreetResponse, error) {
+	m := new(GreetResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // GreetServiceServer is the server API for GreetService service.
 // All implementations must embed UnimplementedGreetServiceServer
 // for forward compatibility
@@ -117,6 +149,7 @@ type GreetServiceServer interface {
 	Greet(context.Context, *GreetRequest) (*GreetResponse, error)
 	GreetServerStreaming(*GreetRequest, GreetService_GreetServerStreamingServer) error
 	GreetClientStreaming(GreetService_GreetClientStreamingServer) error
+	GreetEveryOneBiDirectional(GreetService_GreetEveryOneBiDirectionalServer) error
 	mustEmbedUnimplementedGreetServiceServer()
 }
 
@@ -132,6 +165,9 @@ func (UnimplementedGreetServiceServer) GreetServerStreaming(*GreetRequest, Greet
 }
 func (UnimplementedGreetServiceServer) GreetClientStreaming(GreetService_GreetClientStreamingServer) error {
 	return status.Errorf(codes.Unimplemented, "method GreetClientStreaming not implemented")
+}
+func (UnimplementedGreetServiceServer) GreetEveryOneBiDirectional(GreetService_GreetEveryOneBiDirectionalServer) error {
+	return status.Errorf(codes.Unimplemented, "method GreetEveryOneBiDirectional not implemented")
 }
 func (UnimplementedGreetServiceServer) mustEmbedUnimplementedGreetServiceServer() {}
 
@@ -211,6 +247,32 @@ func (x *greetServiceGreetClientStreamingServer) Recv() (*GreetRequest, error) {
 	return m, nil
 }
 
+func _GreetService_GreetEveryOneBiDirectional_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(GreetServiceServer).GreetEveryOneBiDirectional(&greetServiceGreetEveryOneBiDirectionalServer{stream})
+}
+
+type GreetService_GreetEveryOneBiDirectionalServer interface {
+	Send(*GreetResponse) error
+	Recv() (*GreetRequest, error)
+	grpc.ServerStream
+}
+
+type greetServiceGreetEveryOneBiDirectionalServer struct {
+	grpc.ServerStream
+}
+
+func (x *greetServiceGreetEveryOneBiDirectionalServer) Send(m *GreetResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *greetServiceGreetEveryOneBiDirectionalServer) Recv() (*GreetRequest, error) {
+	m := new(GreetRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // GreetService_ServiceDesc is the grpc.ServiceDesc for GreetService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -232,6 +294,12 @@ var GreetService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "GreetClientStreaming",
 			Handler:       _GreetService_GreetClientStreaming_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "GreetEveryOneBiDirectional",
+			Handler:       _GreetService_GreetEveryOneBiDirectional_Handler,
+			ServerStreams: true,
 			ClientStreams: true,
 		},
 	},

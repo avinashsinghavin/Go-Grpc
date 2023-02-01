@@ -7,7 +7,7 @@ import (
 	"proto-go/greet/proto"
 )
 
-func (s Server) GreetClientStreaming(stream proto.GreetService_GreetClientStreamingServer) error {
+func (s *Server) GreetClientStreaming(stream proto.GreetService_GreetClientStreamingServer) error {
 	fmt.Println("Greet from client streaming and server was invoked")
 
 	res := ""
