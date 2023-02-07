@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package calculator;
+
+option go_package = "proto-go/calculator/proto";
+
+message NumbersRequest {
+  int64 x = 1;
+  int64 y = 2;
+}
+
+message MaxResponse {
+  int64 response = 1;
+  int64 max = 2;
+}

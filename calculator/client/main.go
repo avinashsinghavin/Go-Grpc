@@ -20,4 +20,5 @@ func main() {
 	doCalculate(c)
 	findPrimary(c)
 	doAverage(c)
+	findMaxNumber(c)
 }

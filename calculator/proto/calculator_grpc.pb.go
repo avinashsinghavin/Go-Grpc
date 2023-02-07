@@ -25,6 +25,7 @@ type CalculatorServiceClient interface {
 	Calculate(ctx context.Context, in *CalculationRequest, opts ...grpc.CallOption) (*CalculatorResponse, error)
 	PrimeDecomposition(ctx context.Context, in *NumberRequest, opts ...grpc.CallOption) (CalculatorService_PrimeDecompositionClient, error)
 	AverageClientStreaming(ctx context.Context, opts ...grpc.CallOption) (CalculatorService_AverageClientStreamingClient, error)
+	FindMaxNumberBiDirectional(ctx context.Context, opts ...grpc.CallOption) (CalculatorService_FindMaxNumberBiDirectionalClient, error)
 }
 
 type calculatorServiceClient struct {
@@ -110,6 +111,37 @@ func (x *calculatorServiceAverageClientStreamingClient) CloseAndRecv() (*Average
 	return m, nil
 }
 
+func (c *calculatorServiceClient) FindMaxNumberBiDirectional(ctx context.Context, opts ...grpc.CallOption) (CalculatorService_FindMaxNumberBiDirectionalClient, error) {
+	stream, err := c.cc.NewStream(ctx, &CalculatorService_ServiceDesc.Streams[2], "/calculator.CalculatorService/FindMaxNumberBiDirectional", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &calculatorServiceFindMaxNumberBiDirectionalClient{stream}
+	return x, nil
+}
+
+type CalculatorService_FindMaxNumberBiDirectionalClient interface {
+	Send(*NumbersRequest) error
+	Recv() (*MaxResponse, error)
+	grpc.ClientStream
+}
+
+type calculatorServiceFindMaxNumberBiDirectionalClient struct {
+	grpc.ClientStream
+}
+
+func (x *calculatorServiceFindMaxNumberBiDirectionalClient) Send(m *NumbersRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *calculatorServiceFindMaxNumberBiDirectionalClient) Recv() (*MaxResponse, error) {
+	m := new(MaxResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // CalculatorServiceServer is the server API for CalculatorService service.
 // All implementations must embed UnimplementedCalculatorServiceServer
 // for forward compatibility
@@ -117,6 +149,7 @@ type CalculatorServiceServer interface {
 	Calculate(context.Context, *CalculationRequest) (*CalculatorResponse, error)
 	PrimeDecomposition(*NumberRequest, CalculatorService_PrimeDecompositionServer) error
 	AverageClientStreaming(CalculatorService_AverageClientStreamingServer) error
+	FindMaxNumberBiDirectional(CalculatorService_FindMaxNumberBiDirectionalServer) error
 	mustEmbedUnimplementedCalculatorServiceServer()
 }
 
@@ -132,6 +165,9 @@ func (UnimplementedCalculatorServiceServer) PrimeDecomposition(*NumberRequest, C
 }
 func (UnimplementedCalculatorServiceServer) AverageClientStreaming(CalculatorService_AverageClientStreamingServer) error {
 	return status.Errorf(codes.Unimplemented, "method AverageClientStreaming not implemented")
+}
+func (UnimplementedCalculatorServiceServer) FindMaxNumberBiDirectional(CalculatorService_FindMaxNumberBiDirectionalServer) error {
+	return status.Errorf(codes.Unimplemented, "method FindMaxNumberBiDirectional not implemented")
 }
 func (UnimplementedCalculatorServiceServer) mustEmbedUnimplementedCalculatorServiceServer() {}
 
@@ -211,6 +247,32 @@ func (x *calculatorServiceAverageClientStreamingServer) Recv() (*AverageRequest,
 	return m, nil
 }
 
+func _CalculatorService_FindMaxNumberBiDirectional_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(CalculatorServiceServer).FindMaxNumberBiDirectional(&calculatorServiceFindMaxNumberBiDirectionalServer{stream})
+}
+
+type CalculatorService_FindMaxNumberBiDirectionalServer interface {
+	Send(*MaxResponse) error
+	Recv() (*NumbersRequest, error)
+	grpc.ServerStream
+}
+
+type calculatorServiceFindMaxNumberBiDirectionalServer struct {
+	grpc.ServerStream
+}
+
+func (x *calculatorServiceFindMaxNumberBiDirectionalServer) Send(m *MaxResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *calculatorServiceFindMaxNumberBiDirectionalServer) Recv() (*NumbersRequest, error) {
+	m := new(NumbersRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // CalculatorService_ServiceDesc is the grpc.ServiceDesc for CalculatorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -232,6 +294,12 @@ var CalculatorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "AverageClientStreaming",
 			Handler:       _CalculatorService_AverageClientStreaming_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "FindMaxNumberBiDirectional",
+			Handler:       _CalculatorService_FindMaxNumberBiDirectional_Handler,
+			ServerStreams: true,
 			ClientStreams: true,
 		},
 	},

@@ -6,6 +6,7 @@ option go_package = "proto-go/calculator/proto";
 
 import "prime.proto";
 import "average.proto";
+import "max_number.proto";
 
 message CalculationRequest {
   string operation = 1;
@@ -21,4 +22,5 @@ service CalculatorService {
   rpc Calculate(CalculationRequest) returns (CalculatorResponse);
   rpc PrimeDecomposition(NumberRequest) returns (stream PrimeNoResponse);
   rpc AverageClientStreaming(stream AverageRequest) returns (AverageResponse);
+  rpc FindMaxNumberBiDirectional(stream NumbersRequest) returns (stream MaxResponse);
 }
